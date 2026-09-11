@@ -1,21 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMCG Result Portal</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IMCG Korang Town - Online Result Portal</title>
+  <link rel="stylesheet" href="style.css"> <!-- ye line zaroori hai -->
 </head>
 <body>
 
-<div class="box">
-    <h2>IMCG Result Portal</h2>
-    <p>Apna Admission No likhein</p>
-    <input type="text" id="admissionNo" placeholder="Ex: G101">
-    <button onclick="getResult()">Result Dekhain</button>
+  <div class="container">
+    <h1>IMCG Korang Town</h1>
+    <p class="subtitle">Islamabad Model College for Girls</p>
+    <p class="portal-title">Online Result Portal</p>
+    <hr>
+    
+    <div class="search-box">
+      <label>Enter Admission No:</label>
+      <input type="text" id="admissionNo" placeholder="G101">
+      <br>
+      <button onclick="searchStudent()">Result Dekhain</button>
+    </div>
+    
+    <p class="info-text">Apna Admission No daal kar result check karein</p>
+    
     <div id="result"></div>
-</div>
+    
+    <hr>
+    <p class="footer">Data managed via Google Sheets | For IMCG Korang Town Students</p>
+  </div>
 
-<script src="script.js"></script>
+<script src="script.js"></script> <!-- ye line zaroori hai -->
 </body>
 </html>
