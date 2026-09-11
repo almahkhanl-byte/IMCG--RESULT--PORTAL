@@ -1,4 +1,4 @@
-const API_URL = "https://docs.google.com/spreadsheets/d/19lX5eSZU5UAFmTVvEG-PA4si87kn2AZYzzEaIaaz28M/edit?gid=0#gid=0";
+const API_URL = "https://docs.google.com/spreadsheets/d/19lX5eSZU5UAFmTVvEG-PA4si87kn2AZYzzEaIaaz28M/edit?usp=drivesdk";
 
 function searchStudent() {
   const admissionNo = document.getElementById("admissionNo").value.trim();
