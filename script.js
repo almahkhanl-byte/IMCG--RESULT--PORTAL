@@ -1,5 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwwJGJKPs-F8E_hkpsh-fSiChni9inMpgGKP5fpd22GgHFlKS-8Nu7Uz9VLUAXo8SG0kw/exec";
-
+const API_URL = "https://script.google.com/macros/s/AKfycbwGbmjVqVUAYnezEI7XqDyOJKHPoDGtN.../exec";
 async function getResult() {
     const admissionInput = document.getElementById("admissionNo").value.trim();
     const resultDiv = document.getElementById("result");
