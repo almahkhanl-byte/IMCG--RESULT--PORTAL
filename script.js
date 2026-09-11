@@ -1,31 +1,41 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwGbmjVqVUAYnezEI7XqDyOJKHPoDGtN.../exec";
-async function getResult() {
-    const admissionInput = document.getElementById("admissionNo").value.trim();
-    const resultDiv = document.getElementById("result");
-    
-    if(admissionInput === "") {
-        resultDiv.innerHTML = "<p style='color:red'>Pehle Admission No likho</p>"; 
-        return;
+const API_URL = "https://script.google.com/macros/s/AKfycbyQfUqkMr8u-TeGyJ6axZHVm-em1SL9OAcz8zecdfi8_2B9a9ZP_SrtkcXOzXCI20PZZA/exec";
+
+function searchStudent() {
+  const admissionNo = document.getElementById("admissionNo").value.trim();
+  const resultDiv = document.getElementById("result");
+
+  if(admissionNo === ""){
+    alert("Pehle Admission No likho");
+    return;
+  }
+
+  resultDiv.innerHTML = "<p>Loading...</p>";
+
+  fetch(API_URL + "?admissionNo=" + admissionNo)
+  .then(response => response.json())
+  .then(data => {
+    if(data.status === "found"){
+      resultDiv.innerHTML = `
+        <h2>Result Card</h2>
+        <p><b>Name:</b> ${data.Name}</p>
+        <p><b>Father Name:</b> ${data.FatherName}</p>
+        <p><b>Group:</b> ${data.Group}</p>
+        <p><b>Math:</b> ${data.Math} | <b>Physics:</b> ${data.Physics} | <b>Chemistry:</b> ${data.Chemistry}</p>
+        <p><b>Computer:</b> ${data.Computer} | <b>English:</b> ${data.English} | <b>Urdu:</b> ${data.Urdu}</p>
+        <p><b>Islamiyat:</b> ${data.Islamiat} | <b>Pak Studies:</b> ${data.PakStudies}</p>
+        <hr>
+        <h3><b>Total:</b> ${data.Total} | <b>Grade:</b> ${data.Grade} | <b>Status:</b> ${data.Status}</h3>
+      `;
+    } 
+    else if(data.status === "notfound"){
+      resultDiv.innerHTML = "<h3 style='color:red; text-align:center'>Admission No nahi mila</h3>";
     }
-    
-    resultDiv.innerHTML = "<p>Loading...</p>";
-    
-    try{
-        const res = await fetch(`${API_URL}?admissionNo=${admissionInput}`);
-        const data = await res.json();
-        
-        if(data.status === "found"){
-            let html = `<h3>Result: ${data.StudentName}</h3><table>`;
-            for(let key in data){ 
-                if(key!=="status") 
-                    html += `<tr><td>${key}</td><td>${data[key]}</td></tr>`; 
-            }
-            html += "</table>"; 
-            resultDiv.innerHTML = html;
-        } else { 
-            resultDiv.innerHTML = `<p style='color:red'>Record not found. Admission No check karein</p>`; 
-        }
-    } catch(e){ 
-        resultDiv.innerHTML = `<p style='color:red'>Error: API se connect nahi ho pa raha</p>`; 
+    else{
+      resultDiv.innerHTML = "<h3 style='color:red; text-align:center'>Error: " + data.message + "</h3>";
     }
+  })
+  .catch(error => {
+    resultDiv.innerHTML = "<h3 style='color:red; text-align:center'>API connect nahi ho rahi</h3>";
+    console.error(error);
+  });
 }
