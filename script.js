@@ -1,4 +1,4 @@
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTSrthf9aWtrRSdZL091koN1pYHYPAEHg_wjFSkTW2C-oMxqV5P3BQcVJJDetCrXzSrCea18Mq--oQ/pub?output=csv"
+const API_URL = "https://script.google.com/macros/s/AKfycbyQfUqkMr8u-TeGyJ6axZHVm-em1SL9OAcz8zecdfi8_2B9a9ZP_SrtkcXOzXCI20PZZA/exec"
 function searchStudent() {
   const admissionNo = document.getElementById("admissionNo").value.trim();
   const resultDiv = document.getElementById("result");
