@@ -1,193 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Result Portal - IMCG Korang Town</title>
-    <!-- Tailwind CSS for sleek, clean styling -->
-    <script src="https://tailwindcss.com"></script>
-    <!-- PapaParse for parsing the Google Sheet CSV efficiently -->
-    <script src="https://cloudflare.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMCG Result Portal</title>
+<link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-100 min-h-screen font-sans">
+<body>
 
-    <!-- Header Section -->
-    <header class="bg-blue-800 text-white py-6 shadow-md text-center">
-        <h1 class="text-2xl md:text-3xl font-bold uppercase tracking-wider">Islamabad Model College for Girls</h1>
-        <p class="text-sm md:text-base text-blue-200 mt-1">Korang Town, Islamabad</p>
-        <h2 class="text-lg font-semibold mt-2 text-yellow-300">Online Examination Result Portal</h2>
-    </header>
+<div class="box">
+    <h2>IMCG Result Portal</h2>
+    <p>Apna Admission No likhein</p>
+    <input type="text" id="admissionNo" placeholder="Ex: G101">
+    <button onclick="getResult()">Result Dekhain</button>
+    <div id="result"></div>
+</div>
 
-    <!-- Main Container -->
-    <main class="max-w-2xl mx-auto px-4 py-8">
-        
-        <!-- Search Card -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <label for="admissionNo" class="block text-gray-700 font-bold mb-2 text-lg">Enter Admission Number:</label>
-            <div class="flex flex-col sm:flex-row gap-2">
-                <input type="text" id="admissionNo" placeholder="e.g., G101, G201" 
-                       class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase font-semibold">
-                <button onclick="searchResult()" 
-                        class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-2 rounded-md transition duration-200 shadow">
-                    Search Result
-                </button>
-            </div>
-            <p id="errorBox" class="text-red-600 font-medium mt-3 hidden"></p>
-        </div>
-
-        <!-- Result Display Area -->
-        <div id="resultCard" class="bg-white rounded-lg shadow-lg overflow-hidden hidden transition-all duration-300">
-            <!-- Student Profile Header -->
-            <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-xs text-blue-200 uppercase font-bold tracking-wider">Student Name</p>
-                        <p id="resName" class="text-xl font-bold"></p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-blue-200 uppercase font-bold tracking-wider">Admission No.</p>
-                        <p id="resRoll" class="text-xl font-bold"></p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-blue-200 uppercase font-bold tracking-wider">Father's Name</p>
-                        <p id="resFather" class="text-base font-medium"></p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-blue-200 uppercase font-bold tracking-wider">Academic Group</p>
-                        <p id="resGroup" class="text-base font-bold text-yellow-300"></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Detailed Marksheet Table -->
-            <div class="p-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Subject-Wise Performance</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 border-b-2 border-gray-200">
-                                <th class="py-2 px-4 text-gray-600 font-bold uppercase text-sm">Subject</th>
-                                <th class="py-2 px-4 text-gray-600 font-bold uppercase text-sm text-right">Obtained Marks</th>
-                            </tr>
-                        </thead>
-                        <tbody id="marksTableBody" class="divide-y divide-gray-200">
-                            <!-- Dynamic marks rows injected here -->
-                        </tbody>
-                        <tfoot>
-                            <tr class="bg-blue-50 font-bold border-t-2 border-blue-200">
-                                <td class="py-3 px-4 text-blue-900 text-base">Total Obtained Marks</td>
-                                <td id="resTotal" class="py-3 px-4 text-blue-900 text-base text-right"></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-                <!-- Print Button Footer -->
-                <div class="mt-6 flex justify-end">
-                    <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium py-2 px-4 rounded shadow transition">
-                        Print Marksheet
-                    </button>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- JavaScript Logic Section -->
-    <script>
-        // Directly maps the published CSV link you provided
-        const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTSrthf9aWtrRSdZL091koN1pYHYPAEHg_wjFSkTW2C-oMxqV5P3BQcVJJDetCrXzSrCea18Mq--oQ/pub?output=csv";
-
-        function searchResult() {
-            const inputVal = document.getElementById("admissionNo").value.trim().toUpperCase();
-            const errorBox = document.getElementById("errorBox");
-            const resultCard = document.getElementById("resultCard");
-
-            // Reset view state
-            errorBox.classList.add("hidden");
-            resultCard.classList.add("hidden");
-
-            if (!inputVal) {
-                showError("Please enter a valid Admission Number.");
-                return;
-            }
-
-            // Fetch and parse your Google Sheet CSV live data
-            Papa.parse(csvUrl, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    const data = results.data;
-                    
-                    // Look up the record matching AdmissionNo column
-                    const student = data.find(row => {
-                        const cellKey = row['AdmissionNo'] || row['AdmissionNo ']; 
-                        return cellKey && cellKey.trim().toUpperCase() === inputVal;
-                    });
-
-                    if (student) {
-                        renderStudentCard(student);
-                    } else {
-                        showError(`Admission Number "${inputVal}" not found. Please verify and try again.`);
-                    }
-                },
-                error: function(err) {
-                    showError("Unable to access the data server. Please check your network connection.");
-                    console.error(err);
-                }
-            });
-        }
-
-        function renderStudentCard(student) {
-            // Bind student bio details
-            document.getElementById("resName").innerText = student['Name'] || 'N/A';
-            document.getElementById("resRoll").innerText = student['AdmissionNo'] || student['AdmissionNo '];
-            document.getElementById("resFather").innerText = student['FatherName'] || 'N/A';
-            document.getElementById("resGroup").innerText = student['Group'] || 'N/A';
-
-            const tableBody = document.getElementById("marksTableBody");
-            tableBody.innerHTML = ""; // Clear out previous searches
-
-            // Explicitly lists subject columns matching your spreadsheet schema
-            const subjectColumns = ['Math', 'Physics', 'Chemistry', 'Computer', 'Economics', 'Civics', 'FineArts', 'English'];
-            let grandTotal = 0;
-            let displayCount = 0;
-
-            subjectColumns.forEach(subject => {
-                const markValue = student[subject];
-                
-                // Only create rows for fields that actually contain a value/score
-                if (markValue && markValue.trim() !== "") {
-                    const score = parseInt(markValue.trim(), 10) || 0;
-                    grandTotal += score;
-                    displayCount++;
-
-                    const row = document.createElement("tr");
-                    row.className = "hover:bg-gray-50 transition-colors";
-                    row.innerHTML = `
-                        <td class="py-3 px-4 font-medium text-gray-700">${subject}</td>
-                        <td class="py-3 px-4 text-right font-semibold text-gray-900">${score}</td>
-                    `;
-                    tableBody.appendChild(row);
-                }
-            });
-
-            // Handle condition if sheet row exists but no marks are populated yet
-            if (displayCount === 0) {
-                tableBody.innerHTML = `<tr><td colspan="2" class="py-4 px-4 text-center text-gray-500 italic">No subject marks updated for this entry yet.</td></tr>`;
-            }
-
-            document.getElementById("resTotal").innerText = grandTotal;
-            document.getElementById("resultCard").classList.remove("hidden");
-        }
-
-        function showError(message) {
-            const errorBox = document.getElementById("errorBox");
-            errorBox.innerText = message;
-            errorBox.classList.remove("hidden");
-        }
-    </script>
+<script src="script.js"></script>
 </body>
 </html>
-
